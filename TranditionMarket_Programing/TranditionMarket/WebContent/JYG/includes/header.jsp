@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,19 +8,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" crossorigin>
 <link rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.24/datatables.min.css" crossorigin>
+<link rel="stylesheet" href="<%=request.getContextPath() %>/JYG/css/style.css"> <!-- 임시경로 -->
 <title>Insert title here</title>
 </head>
 <body>
 	<%
-		String mainId="";
 		String login = "로그인";
 		String hideJoin = "";
-		String hideMypage = "d-none";		
+		String hideMypage = "d-none";
+		String welcome = "";
 		
-		boolean now = false;	// 테스트용 boolean값 true로 바꾸면 로그인 된 상태로 볼수있음
+		boolean now = true;	// 테스트용 boolean값 true로 바꾸면 로그인 된 상태로 볼수있음
 		if(now){ // session.getAttribute("userId")!=null 로 로그인 상태 체크
-			session.setAttribute("userId","abc");
-			mainId = session.getAttribute("userId")+"님 환영합니다.";
+			session.setAttribute("userId","admin");
+			welcome = session.getAttribute("userId")+"님 환영합니다.";
 			login = "로그아웃";
 			hideJoin ="d-none";
 			hideMypage = "";
@@ -36,8 +39,8 @@
 					<li><a href="#" class="nav-link px-2 mt-3 text-white">게시판</a></li>
 				</ul>
 				<div class="text-end flex-row-reverse mt-2">
-					<span class="mr-2"><%=mainId%></span>
-					<button type="button" class="btn btn-warning <%=hideMypage%>">마이페이지</button>
+					<span class="mr-2"><%=welcome%></span>
+					<button type="button" onclick="location.href='<%=request.getContextPath()%>/Mypage'" class="btn btn-warning <%=hideMypage%>">마이페이지</button>
 					<button type="button" class="btn btn-outline-light me-2"><%=login%></button>
 					<button type="button" class="btn btn-warning <%=hideJoin%>">회원가입</button>
 				</div>

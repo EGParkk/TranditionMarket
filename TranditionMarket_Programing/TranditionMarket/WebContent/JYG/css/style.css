@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+th{
+	background-color: azure;
+}
+
+table{
+	width: 100%;
+}
+
+.table td{
+	padding: 3px;
+}
+
+.profileImg{
+	border:3px solid black;
+	border-radius: 25px;
+}
