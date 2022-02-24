@@ -23,6 +23,14 @@
 <title>전,알,사</title>
 </head>
 <body>
+<% String nick = request.getParameter("nick");
+	String uno = request.getParameter("uno");
+	
+	if (nick == null && uno == null) {
+		nick = "관리자";
+		uno = "1";
+	}
+%>
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
 			<div class="container-fluid">
@@ -32,10 +40,10 @@
 						<li class="nav-item"><a class="nav-link"
 							href="<%=request.getContextPath()%>">홈</a></li>
 						<li class="nav-item"><a class="nav-link"
-							href="<%=request.getContextPath()%>/Boards?action=notice&uno=1&nick=관리자">공지사항</a> <%-- 헤더에 uno 랑 nick 변수만 넣어주면 로그인 구별 가능 --%>
+							href="<%=request.getContextPath()%>/Boards?action=notice&uno=<%=uno%>&nick=<%=nick%>">공지사항</a> <%-- 헤더에 uno 랑 nick 변수만 넣어주면 로그인 구별 가능 --%>
 						</li>
 						<li class="nav-item"><a class="nav-link"
-							href="<%=request.getContextPath()%>/Boards?action=board&uno=1&nick=관리자">게시판</a>
+							href="<%=request.getContextPath()%>/Boards?action=board&uno=<%=uno%>&nick=<%=nick%>">게시판</a>
 						</li>
 						<li class="nav-item"><a class="nav-link"
 							href="<%=request.getContextPath()%>">지역</a></li>
@@ -44,7 +52,7 @@
 					</ul>
 					<ul class="navbar-nav ms-auto">
 						<%
-							String nick = request.getParameter("nick");
+							
 						if (nick == null) {
 						%>
 						<li class="nav-item"><a class="nav-link" href="">로그인</a></li>

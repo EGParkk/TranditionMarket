@@ -54,7 +54,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
           <i class="bi bi-hand-thumbs-up-fill"></i><br />추천하기
         </button>
         <hr />
-        <button class="btn btn-danger rounded float-end m-1" data-bs-target="modalcontent">삭제</button>
+        <button class="btn btn-danger rounded float-end m-1" data-bs-target="modalcontent" onclick="cdelete()">삭제</button>
         <button class="btn btn-secondary rounded float-end m-1" onclick="cedit()">수정</button>
       </div>
       <br>
@@ -149,7 +149,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
         <p>삭제하시겠습니까?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="cdelete()" data-bs-dismiss="modal">확인</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
       </div>
     </div>
@@ -218,21 +218,14 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
     		  alert('수정 및 삭제를 할 수 없습니다.');
     		  location.reload();
     	  } else {
+    		
+    		 
            location.href = '<%=request.getContextPath()%>' + '/Boards?action=cdelete&bno=' + '${boardlist.bno}' +'&actiont=' + '<%=request.getParameter("actiont")%>' + '&uno=' + '<%=request.getParameter("uno") %>' + '&nick=' + '<%= request.getParameter("nick")%>';    		  
     	  }
        
           
       }
-
-      function commentdel() {
-    	  const dbtn = document.getElementById('#deletebtn');
-    	  dbtn.addEventListener('click', function() {
-          console.log($(this).data('cno'))
-        })
-    		  
-    
-        
-      }
+         
       function check() {
     	  let uno = "<%= uno%>";
     	  let boarduno = '${boardlist.uno}';

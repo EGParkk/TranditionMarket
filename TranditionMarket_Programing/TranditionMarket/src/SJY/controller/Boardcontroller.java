@@ -97,14 +97,14 @@ public class Boardcontroller extends HttpServlet {
 		request.setAttribute("boardlist", board);
 		request.setAttribute("bno", bno);
 		
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/viewboard.jsp" + "?acitont=" + actiont);
+		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont);
 		rd.forward(request, response);
 		
 	}
 
 	// 로그인 안했을 때 경고페이지
 	private void no(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/no.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("no.jsp");
 		rd.forward(request, response);
 		
 	}
@@ -123,7 +123,7 @@ public class Boardcontroller extends HttpServlet {
 		request.setAttribute("boardlist", board);
 		request.setAttribute("bno", bno);
 		
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
 		rd.forward(request, response);
 	}
 	// 게시글 삭제
@@ -136,7 +136,7 @@ public class Boardcontroller extends HttpServlet {
 		
 		List<Board> board = boardDao.findAll(actiont);  
 		request.setAttribute("boardlist", board); 
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/board.jsp" + "?uno=" + uno + "&nick" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("board.jsp" + "?uno=" + uno + "&nick" + nick);
 		rd.forward(request, response); 
 	}
 	// 게시글 수정
@@ -155,7 +155,7 @@ public class Boardcontroller extends HttpServlet {
 		boardDao.check(check, bno);
 		request.setAttribute("boardlist", board);
 		request.setAttribute("bno", bno);
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/viewboard.jsp" + "?action=" + actiont + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?action=" + actiont + "&uno=" + uno + "&nick=" + nick);
 		rd.forward(request, response);
 		
 	}
@@ -179,7 +179,7 @@ public class Boardcontroller extends HttpServlet {
 			request.setAttribute("boardlist", board2);
 			request.setAttribute("bno", bno);
 			
-			RequestDispatcher rd = request.getRequestDispatcher("SJY/viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
+			RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
 			rd.forward(request, response);
 		}
 	}
@@ -209,7 +209,7 @@ public class Boardcontroller extends HttpServlet {
 		request.setAttribute("boardlist", board);
 		request.setAttribute("bno", bno);
 		
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
 		rd.forward(request, response);
 	}
 	// 게시글 열람
@@ -225,7 +225,7 @@ public class Boardcontroller extends HttpServlet {
 		request.setAttribute("boardlist", board);
 		request.setAttribute("bno", bno);
 		
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
 		rd.forward(request, response);
 		
 	}
@@ -255,14 +255,14 @@ public class Boardcontroller extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		int uno = Integer.parseInt(request.getParameter("uno"));
 		String nick = request.getParameter("nick");
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/write.jsp" + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("write.jsp" + "?uno=" + uno + "&nick=" + nick);
 		rd.forward(request, response);
 	}
 	// index 페이지 이동
 	private void home(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int uno = Integer.parseInt(request.getParameter("uno"));
 		String nick = request.getParameter("nick");
-		RequestDispatcher rd = request.getRequestDispatcher("SJY/home.jsp" + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("home.jsp" + "&uno=" + uno + "&nick=" + nick);
 		rd.forward(request, response);
 	}
 	// 게시판 출력
@@ -270,7 +270,7 @@ public class Boardcontroller extends HttpServlet {
 			String action = request.getParameter("action");
 			List<Board> board = boardDao.findAll(action);  
 			request.setAttribute("boardlist", board); 
-			RequestDispatcher rd = request.getRequestDispatcher("SJY/board.jsp");
+			RequestDispatcher rd = request.getRequestDispatcher("board.jsp");
 			rd.forward(request, response); 
 		}
 

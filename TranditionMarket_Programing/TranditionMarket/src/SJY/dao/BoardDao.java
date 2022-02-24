@@ -25,7 +25,7 @@ public class BoardDao {
 
 	public BoardDao() {
 		try {
-			String dbURL = "jdbc:mysql://localhost:3306/tranditionmarket?useSSL=false";
+			String dbURL = "jdbc:mysql://localhost:3306/traditionmarket?useSSL=false";
 			String dbID = "root";
 			String dbPassword = "1234";
 			Class.forName("com.mysql.jdbc.Driver");
@@ -97,6 +97,7 @@ public class BoardDao {
 		boolean rowAffected = false;
 		String type = "";
 		int zero = 0;
+		int mno = 1;
 		String now = getDate();
 
 		if (actiont.equals("notice")) {
@@ -115,7 +116,7 @@ public class BoardDao {
 			pstmt.setString(5, now);
 			pstmt.setString(6, type);
 			pstmt.setInt(7, uno);
-			pstmt.setInt(8, uno); // mno 있어야 하는건가???
+			pstmt.setInt(8, mno); // mno 있어야 하는건가???
 
 			rowAffected = pstmt.executeUpdate() > 0;
 

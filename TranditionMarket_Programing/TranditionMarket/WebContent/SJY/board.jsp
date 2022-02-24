@@ -13,6 +13,7 @@
 			String action = request.getParameter("action");
 			String uno = request.getParameter("uno");
 			String nick = request.getParameter("nick");
+				
 			
 		if (action.equals("notice")) {
 		%>
@@ -57,7 +58,7 @@
 		<% if (uno == null) action = "no"; %>
 		<button
 			class="position-absolute bottom-0 end-0 mb-5 mt-0 bg-secondary px-3 py-1"
-			onclick="location.href='<%=request.getContextPath() %>/Boards?action=write&actiont=<%= action %>&uno=<%=uno%>'">글쓰기</button>
+			onclick="move()">글쓰기</button>
 	</div>
 
 <script type="text/javascript">
@@ -67,9 +68,12 @@ rows.addEventListener('click', function (e) {
   let table = new DataTable('#table');
   let data = table.row(e.target).data();
 
- location.href = encodeURI('Boards?bno=' + data[0] + '&actiont=' + data[1] +  '&check=' + data[6] + '&action=view' + '&uno=' + '<%=uno%>' + '&nick=' + '<%=request.getParameter("nick")%>');
-});
-
+ 
+location.href = 'Boards?action=view&bno=' + data[0] + '&actiont=' + data[1] + '&check=' + data[6] + '&uno=' + '<%=uno%>' + '&nick=' + '<%=nick%>';
+})
+function move() {
+	location.href='<%=request.getContextPath() %>' + '/Boards?action=write&actiont=' + '<%=action %>' + '&uno=' + '<%=uno%>'+ '&nick=' + '<%=nick%>';
+}
 </script>
 <jsp:include page="footer.jsp" />
 </body>
