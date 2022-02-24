@@ -66,18 +66,11 @@ CREATE TABLE IF NOT EXISTS `tranditionMarket`.`board` (
   `bdate` DATETIME NOT NULL,
   `btype` VARCHAR(20) NOT NULL,
   `uno` INT NOT NULL,
-  `mno` INT NOT NULL,
   PRIMARY KEY (`bno`),
   INDEX `fk_board_user_idx` (`uno` ASC) VISIBLE,
-  INDEX `fk_board_market_idx` (`mno` ASC) VISIBLE,
   CONSTRAINT `fk_board_user`
     FOREIGN KEY (`uno`)
     REFERENCES `tranditionMarket`.`user` (`uno`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_board_market`
-    FOREIGN KEY (`mno`)
-    REFERENCES `tranditionMarket`.`market` (`mno`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
