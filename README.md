@@ -40,7 +40,7 @@
 ![image](https://user-images.githubusercontent.com/89386949/158995268-0ded3342-d187-4ce5-a659-85c50d6fc7b0.png)
 ## 2022.02.24.
 - 회원정보 구현
-  - DB user table에서 회원정보 조회
+  - DB user table에서 로그인한 회원정보 조회
   - 회원정보 수정 구현
   - 회원탈퇴 구현
 - 즐겨찾기 목록 틀 구현
@@ -61,4 +61,5 @@
 # 시장 페이지
 ![image](https://user-images.githubusercontent.com/89386949/159000941-d9816ce2-bac6-48c3-ad6a-f26bf25646ad.png)
 ## 2022.02.24.
-- 
+- DB market table에서 선택한 시장 정보 조회
+  - 이름, 유형, 개설 주기, 점포수, 취급 품목, 공중화장실, 주차장 데이터
