@@ -76,13 +76,21 @@ public class UserDAO {
 	}
 	
 	public int idCheck(String userID) {
-		String SQL = "SELECT count(*) from USER where userID = ?";
+		String SQL = "SELECT count(*) from USER where id = ?";
 		
 		try {
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, userID);
+			rs = pstmt.executeQuery();
 			
-			return pstmt.executeUpdate();
+			if(rs.next()) {
+				System.out.println("DAO, " + rs.getInt(1));
+				if(rs.getInt(1)==1)
+					return 0; //아이디 사용불가
+				else
+					return 1; //아이디 사용가능
+			}
+			return 2;
 			
 		} catch (Exception e) {
 			e.printStackTrace();

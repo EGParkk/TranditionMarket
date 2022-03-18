@@ -33,7 +33,7 @@ $('#fm-kick').submit(function(e) {
 	$('.btn-action').prop('disabled', true);
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:8080/TraditionMarket/admin",
+		url: "http://localhost:8080/TranditionMarket/admin",
 		data: $('#fm-kick').serialize(),
 		dataType: 'text'
 	})
@@ -83,7 +83,7 @@ $('#fm-control').submit(function(e) {
 	$('.btn-action').prop('disabled', true);
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:8080/TraditionMarket/admin",
+		url: "http://localhost:8080/TranditionMarket/admin",
 		data: $('#fm-control').serialize(),
 		dataType: 'text'
 	})
@@ -97,7 +97,8 @@ $('#fm-control').submit(function(e) {
 		.fail(function(jqXHR, textStatus) {
 			console.log(textStatus);
 		});
-})
+});
+
 $('.btn-deleteBm').on('click', function() {
 	$('#fm-delete-bm').find('input[name=mname]').val($(this).data('mname'));
 	$('#deleteBm').modal('show');
@@ -105,10 +106,10 @@ $('.btn-deleteBm').on('click', function() {
 $('#delete-bm-btn').on('click', function(e){
 	e.preventDefault();
 	e.stopPropagation();
-	$('.btn-action').prop('disablied', true);
+	$('.btn-action').prop('disabled', true);
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:8080/TraditionMarket/Mypage",
+		url: "http://localhost:8080/TranditionMarket/Mypage",
 		data: $('#fm-delete-bm').serialize(),
 		dataType: 'text'
 	})

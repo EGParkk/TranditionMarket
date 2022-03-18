@@ -1,17 +1,35 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
+<%@ page import="dao.MypageDAO"%>
+<%@ page import="model.User"%>
 	<jsp:include page="header.jsp" />
 
 <div>
 	<div class="position-relative col-8 mx-auto mt-4">
 		<%
 			String action = request.getParameter("action");
-			String uno = request.getParameter("uno");
-			String nick = request.getParameter("nick");
-				
+			String uno = (String) session.getAttribute("uno");
+			String nick = (String) session.getAttribute("nick");
+			String admin = (String) session.getAttribute("admin");
+			String id = (String) session.getAttribute("userID");
 			
+			if (uno == null) {
+				session.setAttribute("uno","");
+				session.setAttribute("nick","");
+				session.setAttribute("admin","0");
+			}
+			if (id != null) {
+				MypageDAO mdao = new MypageDAO();
+				User user = mdao.showData(id);
+				uno = Integer.toString(user.getUno());
+				nick = user.getUserNick();
+				admin = Integer.toString(user.getAdmin());
+				session.setAttribute("uno", uno);
+				session.setAttribute("nick", nick);
+				session.setAttribute("admin", admin);
+			}
+
 		if (action.equals("notice")) {
 		%>
 		<h1 class="mb-5 pb-5">공지사항</h1>
@@ -52,7 +70,6 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<% if (uno == null) action = "no"; %>
 		<button
 			class="position-absolute bottom-0 end-0 mb-5 mt-0 bg-secondary px-3 py-1"
 			onclick="move()">글쓰기</button>
@@ -66,10 +83,20 @@ rows.addEventListener('click', function (e) {
   let data = table.row(e.target).data();
 
  
-location.href = 'Boards?action=view&bno=' + data[0] + '&actiont=' + data[1] + '&check=' + data[6] + '&uno=' + '<%=uno%>' + '&nick=' + '<%=nick%>';
+location.href = 'Boards?action=view&bno=' + data[0] + '&actiont=' + data[1] + '&check=' + data[6];
 })
 function move() {
-	location.href='<%=request.getContextPath() %>' + '/Boards?action=write&actiont=' + '<%=action %>' + '&uno=' + '<%=uno%>'+ '&nick=' + '<%=nick%>';
+	if (<%=uno.equals("")%>) {
+		location.href = 'no.jsp?action=noLogin';
+	} else if (<%=action.equals("notice")%>) {
+		if (<%=admin.equals("1")%>) {
+			location.href= '<%=request.getContextPath() %>' + '/Boards?action=write&actiont=' + '<%=action %>';
+		} else {
+			alert('권한이 없습니다.');
+		}
+	} else {
+		location.href= '<%=request.getContextPath() %>' + '/Boards?action=write&actiont=' + '<%=action %>'; 
+	}
 }
 </script>
 <jsp:include page="footer.jsp" />

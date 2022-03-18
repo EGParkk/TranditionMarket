@@ -55,6 +55,8 @@ public class MypageControl extends HttpServlet {
 		if(delete) {
 			System.out.println("즐겨찾기 삭제 완료");
 			response.sendRedirect("Mypage");
+		} else {
+			System.out.println("즐겨찾기 삭제 실패");
 		}
 	}
 
@@ -85,6 +87,7 @@ public class MypageControl extends HttpServlet {
 		user.setUserAddress(request.getParameter("userAddress"));
 		user.setUserPassword(request.getParameter("userPw"));
 		user.setUserIntro(request.getParameter("userIntro"));
+		user.setUserImg(request.getParameter("userImg"));
 		
 		boolean edited = mypageDAO.editMyData(user);
 		if(edited) {

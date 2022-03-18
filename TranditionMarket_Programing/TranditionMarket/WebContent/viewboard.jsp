@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> <%@ taglib
 uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
 <%@ page import="model.Boards"%> 
-<%@ page import="dao.BoardDao"%>
+<%@ page import="dao.MypageDAO"%>
+<%@ page import="model.User"%>
 <%@ page import="java.sql.*"%>
 <%@ page import="java.util.*"%>
 <%@ page import="java.text.*"%>
@@ -13,11 +14,32 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
   </head>
   <body>
     <jsp:include page="header.jsp" />
-    
+ 
     <div class="position-relative col-8 mx-auto mt-4 ">
       <%
       String actiont = request.getParameter("actiont");
-      String uno = request.getParameter("uno");
+		String action = request.getParameter("action");
+		String uno = (String) session.getAttribute("uno");
+		String nick = (String) session.getAttribute("nick");
+		String admin = (String) session.getAttribute("admin");
+		String id = (String) session.getAttribute("userID");
+		
+		if (uno == null) {
+			session.setAttribute("uno","");
+			session.setAttribute("nick","");
+			session.setAttribute("admin","0");
+		}
+		if (id != null) {
+			MypageDAO mdao = new MypageDAO();
+			User user = mdao.showData(id);
+			uno = Integer.toString(user.getUno());
+			nick = user.getUserNick();
+			admin = Integer.toString(user.getAdmin());
+			session.setAttribute("uno", uno);
+			session.setAttribute("nick", nick);
+			session.setAttribute("admin", admin);
+		}
+
       
       if (actiont.equals("notice")) {
       %>
@@ -30,9 +52,8 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
       }
       %>
       <%
-      if (uno == null) { 
+      if (uno == null || uno.equals("")) { 
     	  actiont = "no";
-          uno = "";
       	}
       %>
       <div class="container">
@@ -55,7 +76,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
           <i class="bi bi-hand-thumbs-up-fill"></i><br />추천하기
         </button>
         <hr />
-        <button class="btn btn-danger rounded float-end m-1" data-bs-target="modalcontent" onclick="cdelete()">삭제</button>
+        <button class="btn btn-danger rounded float-end m-1" data-bs-toggle="modal" data-bs-target="#modalcontent">삭제</button>
         <button class="btn btn-secondary rounded float-end m-1" onclick="cedit()">수정</button>
       </div>
       <br>
@@ -89,8 +110,8 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 		           + board.getWriter()
 		           +" <strong>작성일</strong> " 
 		           + rs.getString("cdate").substring(0, 10)
-		           + "<button id='editbtn' class='btn btn-secondary p-1 m-1' data-bs-toggle='modal' data-bs-target='#modal-edit' data-cno='" + board.getCno() + "'>수정</button>"
-		           + "<button id='deletebtn' class='btn btn-danger p-1 m-1' data-bs-toggle='modal' data-bs-target='#modalcomment' data-cno='" + board.getCno() + "'>삭제</button>"
+		           + "<button id='editbtn' class='btn btn-secondary p-1 m-1' data-bs-toggle='modal' data-bs-target='#modal-edit' data-cno='" + board.getCno() + "' data-uno='" + board.getUno() + "'>수정</button>"
+		           + "<button id='deletebtn' class='btn btn-danger p-1 m-1' data-bs-toggle='modal' data-bs-target='#modalcomment' data-cno='" + board.getCno() + "' data-uno='" + board.getUno() + "'>삭제</button>"
 		           + " </div>");  
 		           out.print("<p>"+rs.getString("ccontent")+"</p>");  
 		           out.print("</div>"); 
@@ -103,15 +124,9 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
             %>
 	<div id="output"></div>  
 	<br>
-      <form name="commentform" action="<%=request.getContextPath()%>/Boards" method="POST">
-      	<input type="hidden" name="action" value="commentsave">
-      	<input type="hidden" name="actiont" value=<%=actiont %>>
-      	<input type="hidden" name="bno" value="${boardlist.bno}">
-      	<input type="hidden" name="uno" value="<%=uno%>">
         <textarea class="comments" name="comment" style="width:100%; resize:none;" required></textarea>
-        <br />
-        <button class="btn btn-secondary opacity-50 rounded float-end" type="submit" value="댓글달기">등록</button>
-      </form>
+        <br>
+        <button class="btn btn-secondary opacity-50 rounded float-end" id="com" type="button">등록</button>
       </div>
 <div class="modal fade" id="modal-edit" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -125,8 +140,6 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
       <form id="edit" autocomplete="off" action="<%=request.getContextPath()%>/Boards">
       	<input type="hidden" name="action" value="comment">
       	<input type="hidden" name="actiont" value="<%=actiont%>">
-      	<input type="hidden" name="uno" value="<%=request.getParameter("uno")%>">
-      	<input type="hidden" name="nick" value="<%=request.getParameter("nick")%>">
         <div class="modal-body">
           <div class="form-group">
             <label for="ccontent">content</label>
@@ -141,7 +154,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
     </div>
   </div>
 </div>
-<div class="modal" id='modalcontent' tabindex="-1">
+<div class="modal fade" id='modalcontent' tabindex="-1"  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -152,13 +165,13 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
         <p>삭제하시겠습니까?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="cdelete()">확인</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
       </div>
     </div>
   </div>
 </div>
-<div class="modal" id='modalcomment' tabindex="-1">
+<div class="modal fade" id='modalcomment' tabindex="-1"  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -173,8 +186,8 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
       	<input type="hidden" name="action" value="deletecomment">
       	<input type="hidden" name="actiont" value="<%=actiont%>">
       	<input type="hidden" name="bno" value="${boardlist.bno}">
-      	<input type="hidden" name="uno" value="<%=request.getParameter("uno")%>">
-      	<input type="hidden" name="nick" value="<%=request.getParameter("nick")%>">
+      	<input type="hidden" name="uno" value="<%=session.getAttribute("uno")%>">
+      	<input type="hidden" name="nick" value="<%=session.getAttribute("nick")%>">
         <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
       </form>
@@ -182,8 +195,7 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
     </div>
   </div>
 </div>
-
-
+ <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script type="text/javascript">
       const button = document.getElementById('recom');
 
@@ -192,10 +204,37 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
       });
 
       function reco() {
-    
-         location.href = '<%=request.getContextPath()%>' + '/Boards?action=reco&bno=' + '${boardlist.bno}' + '&reco=' + '${boardlist.reco}' + '&actiont=' + '<%= actiont %>' + '&uno=' + '<%=request.getParameter("uno") %>' + '&nick=' + '<%= request.getParameter("nick")%>';
+    	if (<%=uno == null || uno.equals("")%>) {
+    		location.href = 'no.jsp?action=noLogin';
+    	} else {
+         location.href = '<%=request.getContextPath()%>' + '/Boards?action=reco&bno=' + '${boardlist.bno}' + '&reco=' + '${boardlist.reco}' + '&actiont=' + '<%= actiont %>' + '&uno=' + '<%=request.getParameter("uno") %>' + '&nick=' + '<%= request.getParameter("nick")%>';    		
+    	}
   
       }
+    </script>
+    <script type="text/javascript">
+    const path = '<%= request.getContextPath() %>';
+    $('#com').on('click', function (e) {
+    	if (<%= uno == null || uno.equals("")%>) {
+        	location.href = 'no.jsp?action=noLogin';
+        } else {
+    	let comment =$('.comments').val(); 
+       $.ajax({
+          type: 'GET',
+          url: path + '/Boards?action=commentsave',
+          data: { "comment" : comment,
+        	  		"bno" : ${boardlist.bno}}, 
+        contentType: "charset=UTF-8", 
+      
+        })
+          .done(function (data) {
+        	  location.reload();
+          })
+          .fail(function (jqXHR, textStatus) {
+            console.log(textStatus);
+          });
+      }    	
+    })
     </script>
 
       <script type="text/javascript">
@@ -203,50 +242,40 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
       let com = document.querySelectorAll('#output .box');
 
       function cedit() {
-          let bno = parseInt('${boardlist.bno}');
-        
     	  let uno = "<%= uno%>";
     	  let boarduno = '${boardlist.uno}';
-    	  if (uno != boarduno) {
+    	  let admin = "<%= admin%>";
+    	  if (<%=uno == null || uno.equals("")%>) {
+    		  location.href = 'no.jsp?action=noLogin';
+    	  } else if (uno == boarduno || admin == "1" ) {
+          	location.href = '<%=request.getContextPath()%>' + '/write.jsp?bno=' + '${boardlist.bno}' +  '&actiont=' + '<%=request.getParameter("actiont")%>' + '&action=edit' + '&title=' + '${boardlist.title}' + '&content=' + '${boardlist.content}' + '&check=' + '${boardlist.check}';    		      		  
+    	  } else {  
     		  alert('수정 및 삭제를 할 수 없습니다.');
     		  location.reload();
-    	  } else {
-          	location.href = '<%=request.getContextPath()%>' + '/write.jsp?bno=' + '${boardlist.bno}' +  '&actiont=' + '<%=request.getParameter("actiont")%>' + '&action=edit' + '&title=' + '${boardlist.title}' + '&content=' +'${boardlist.content}' +'&check=' + '${boardlist.check}' + '&uno=' + '<%=request.getParameter("uno") %>' + '&nick=' + '<%= request.getParameter("nick")%>';    		  
     	  }
       }
       function cdelete() {
     	  let uno = "<%= uno%>";
-    	  let boarduno = '${boardlist.uno}';
-    	  if (uno != boarduno) {
-    		  alert('수정 및 삭제를 할 수 없습니다.');
-    		  location.reload();
+    	  let boarduno = '${boardlist.uno}' == null ? <%=session.getAttribute("bno")%> : '${boardlist.uno}';
+    	  let admin = "<%= admin%>";
+    	  if (<%=uno == null || uno.equals("")%>) {
+    		  location.href = 'no.jsp?action=noLogin';
+    	  } else if (uno == boarduno || admin == "1") {
+           location.href = '<%=request.getContextPath()%>' + '/Boards?action=cdelete&bno=' + '${boardlist.bno}' +'&actiont=' + '<%=request.getParameter("actiont")%>';    		      		  
     	  } else {
-    		
-    		 
-           location.href = '<%=request.getContextPath()%>' + '/Boards?action=cdelete&bno=' + '${boardlist.bno}' +'&actiont=' + '<%=request.getParameter("actiont")%>' + '&uno=' + '<%=request.getParameter("uno") %>' + '&nick=' + '<%= request.getParameter("nick")%>';    		  
-    	  }
-       
-          
-      }
-         
-      function check() {
-    	  let uno = "<%= uno%>";
-    	  let boarduno = '${boardlist.uno}';
-    	  if (uno != boarduno) {
     		  alert('수정 및 삭제를 할 수 없습니다.');
     		  location.reload();
     	  }
       }
       </script>
-      <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    
       <script type="text/javascript">
-      const path = '<%= request.getContextPath() %>'; 
-      
       $('.box').on('click', '#editbtn', function (e) {
         const $modal = $('#modal-edit');
-        
+  	  	let cuno = $(this).data('uno');
+  	  	let uno = <%=uno%>;
+  	  	let admin = <%=admin%>;
         $modal.find('#title-edit').text('댓글수정');
-        
         
         $.ajax({
           type: 'POST',
@@ -262,8 +291,11 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
               $modal.find('#edit').append('<input type="hidden" name="cno" value="' + data.board.cno + '">');
               $modal.find('#edit').append('<input type="hidden" name="ccontent" value="' + data.board.ccontent + '">');
               $modal.find('#edit').append('<input type="hidden" name="bno" value="' + data.board.bno + '">');
+              $modal.find('#edit').append('<input type="hidden" name="cuno" value="' + cuno + '">');
+              $modal.find('#edit').append('<input type="hidden" name="uno" value="' + uno + '">');
+              $modal.find('#edit').append('<input type="hidden" name="admin" value="' + admin + '">');
 
-              $modal.modal('show');
+              $modal.show();
             
           })
           .fail(function (jqXHR, textStatus) {
@@ -272,7 +304,10 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
       });
       $('.box').on('click', '#deletebtn', function (e) {
     	  const $modal = $('#modalcomment');
-    	  
+    	  	let cuno = $(this).data('uno');
+			let uno = <%=uno%>;
+			let admin = <%=admin%>;
+			$modal.hide();
           $.ajax({
             type: 'POST',
             url: path + '/Boards?action=editcomment',
@@ -282,19 +317,23 @@ uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
           })
             .done(function (data) {
               console.log(data);
-                
-             	$modal.find('#cd').append('<input type="hidden" name="cno" value="' + data.board.cno + '">');
 
-                $modal.modal('show');
+             	$modal.find('#cd').append('<input type="hidden" name="cno" value="' + data.board.cno + '">');
+             	$modal.find('#cd').append('<input type="hidden" name="cuno" value="' + cuno + '">');
+             	$modal.find('#cd').append('<input type="hidden" name="uno" value="' + uno + '">');
+             	$modal.find('#cd').append('<input type="hidden" name="admin" value="' + admin + '">');
+
+                               	        		  
+             	$modal.show();
               
             })
             .fail(function (jqXHR, textStatus) {
               console.log(textStatus);
             });
-        });
-
+    		  
+    	   
+        });    
       </script>
-	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jqc-1.12.4/dt-1.11.4/b-2.2.2/sl-1.3.4/datatables.min.js"></script>
 	<script src="<%=request.getContextPath()%>/js/market.js"></script>

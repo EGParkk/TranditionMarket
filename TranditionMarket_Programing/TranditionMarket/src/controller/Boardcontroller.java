@@ -11,7 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+
 
 import  dao.BoardDao;
 import model.Boards;
@@ -24,6 +26,7 @@ public class Boardcontroller extends HttpServlet {
 	@Resource(name = "jdbc/tranditionmarket")
 	private DataSource ds;
 	private BoardDao boardDao;
+	
 	
 	@Override
 	public void init() throws ServletException {
@@ -84,22 +87,15 @@ public class Boardcontroller extends HttpServlet {
 			break;
 		}
 	}
+	// 댓글 저장
 	private void commentsave(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String comment = request.getParameter("comment");
-		int uno = Integer.parseInt(request.getParameter("uno"));
+		HttpSession session = request.getSession();
+		
 		int bno = Integer.parseInt(request.getParameter("bno"));
+		int uno = Integer.valueOf((String) session.getAttribute("uno"));
 		
-		boardDao.csave(uno, bno, comment);
-		
-		String actiont = request.getParameter("actiont");
-
-		Boards board = boardDao.find(bno);
-		request.setAttribute("boardlist", board);
-		request.setAttribute("bno", bno);
-		
-		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont);
-		rd.forward(request, response);
-		
+		boardDao.csave(uno, bno, comment);	
 	}
 
 	// 로그인 안했을 때 경고페이지
@@ -110,33 +106,40 @@ public class Boardcontroller extends HttpServlet {
 	}
 	// 댓글 삭제
 	private void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int bno = Integer.parseInt(request.getParameter("bno"));
 		int cno = Integer.parseInt(request.getParameter("cno"));
 		String actiont = request.getParameter("actiont");
-		int uno = Integer.parseInt(request.getParameter("uno"));
-		String nick = request.getParameter("nick");
-		
-		boardDao.delete(cno);
-		
-		int bno = Integer.parseInt(request.getParameter("bno"));
-
-		Boards board = boardDao.find(bno);
-		request.setAttribute("boardlist", board);
-		request.setAttribute("bno", bno);
-		
-		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
-		rd.forward(request, response);
+		String uno = request.getParameter("uno");
+		String cuno = request.getParameter("cuno");
+		String admin = request.getParameter("admin");
+		if (uno.equals(cuno) || admin.equals("1")) {
+			boardDao.delete(cno);
+			
+			Boards board = boardDao.find(bno);
+			request.setAttribute("boardlist", board);
+			request.setAttribute("bno", bno);
+			
+			RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont);
+			rd.forward(request, response);
+		} else {			
+			RequestDispatcher rd = request.getRequestDispatcher("no.jsp" + "?action=permission&actiont=" + actiont);
+			rd.forward(request, response);
+		}
 	}
 	// 게시글 삭제
 	private void cdelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (request.getParameter("bno") == null) {
+			list(request,response);
+		}
+		
 		int bno = Integer.parseInt(request.getParameter("bno"));
 		String actiont = request.getParameter("actiont");
-		int uno = Integer.parseInt(request.getParameter("uno"));
-		String nick = request.getParameter("nick");
+		
 		boardDao.cdelete(bno);
 		
 		List<Boards> board = boardDao.findAll(actiont);  
 		request.setAttribute("boardlist", board); 
-		RequestDispatcher rd = request.getRequestDispatcher("board.jsp" + "?uno=" + uno + "&nick" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("board.jsp");
 		rd.forward(request, response); 
 	}
 	// 게시글 수정
@@ -145,8 +148,6 @@ public class Boardcontroller extends HttpServlet {
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		String actiont = request.getParameter("actiont");
-		int uno = Integer.parseInt(request.getParameter("uno"));
-		String nick = request.getParameter("nick");
 		int check = Integer.parseInt(request.getParameter("check"));
 		boardDao.cupdate(bno, title, content);
 		
@@ -155,31 +156,38 @@ public class Boardcontroller extends HttpServlet {
 		boardDao.check(check, bno);
 		request.setAttribute("boardlist", board);
 		request.setAttribute("bno", bno);
-		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?action=" + actiont + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?action=" + actiont);
 		rd.forward(request, response);
 		
 	}
 	// 댓글 수정
 	private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Boards board = new Boards();
-		
-		board.setCno(Integer.parseInt(request.getParameter("cno")));
-		board.setCcontent(request.getParameter("ccontent"));
-		board.setBno(Integer.parseInt(request.getParameter("bno")));
-
-		boolean isUpdated = boardDao.updatecomment(board); //참이면 저장완료
-		
-		if(isUpdated) {
-			String actiont = request.getParameter("actiont");
-			int bno =Integer.parseInt(request.getParameter("bno"));
-			int uno = Integer.parseInt(request.getParameter("uno"));
-			String nick = request.getParameter("nick");
-
-			Boards board2 = boardDao.find(bno);
-			request.setAttribute("boardlist", board2);
-			request.setAttribute("bno", bno);
+		String actiont = request.getParameter("actiont");
+		String uno = request.getParameter("uno");
+		String cuno = request.getParameter("cuno");
+		String admin = request.getParameter("admin");
+		if (uno.equals(cuno) || admin.equals("1")) {
+			Boards board = new Boards();
 			
-			RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
+			board.setCno(Integer.parseInt(request.getParameter("cno")));
+			board.setCcontent(request.getParameter("ccontent"));
+			board.setBno(Integer.parseInt(request.getParameter("bno")));
+			
+			boolean isUpdated = boardDao.updatecomment(board); //참이면 저장완료
+			
+			if(isUpdated) {
+				
+				int bno = Integer.parseInt(request.getParameter("bno"));
+				
+				Boards board2 = boardDao.find(bno);
+				request.setAttribute("boardlist", board2);
+				request.setAttribute("bno", bno);
+				
+				RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont);
+				rd.forward(request, response);
+			}			
+		} else {
+			RequestDispatcher rd = request.getRequestDispatcher("no.jsp" + "?action=permission&actiont=" + actiont);
 			rd.forward(request, response);
 		}
 	}
@@ -187,7 +195,7 @@ public class Boardcontroller extends HttpServlet {
 	// 댓글 찾기
 	private void edit(HttpServletRequest request, HttpServletResponse response) {
 		int cno = Integer.parseInt(request.getParameter("cno"));
-		
+
 		Boards board = boardDao.findcomment(cno); 
 		
 		if(board != null) {
@@ -197,11 +205,9 @@ public class Boardcontroller extends HttpServlet {
 	// 추천하기 버튼 클릭 시
 	private void reco(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		String actiont = request.getParameter("actiont");
 		int bno = Integer.parseInt(request.getParameter("bno"));
 		int reco = Integer.parseInt(request.getParameter("reco"));
-		int uno = Integer.parseInt(request.getParameter("uno"));
-		String nick = request.getParameter("nick");
+		String actiont = request.getParameter("actiont");
 
 		reco++;
 		boardDao.reco(reco ,bno);
@@ -209,23 +215,22 @@ public class Boardcontroller extends HttpServlet {
 		request.setAttribute("boardlist", board);
 		request.setAttribute("bno", bno);
 		
-		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont);
 		rd.forward(request, response);
 	}
 	// 게시글 열람
 	private void view(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String actiont = request.getParameter("actiont");
-		int bno =Integer.parseInt(request.getParameter("bno"));
+		int bno = Integer.parseInt(request.getParameter("bno"));
 		int check = Integer.parseInt(request.getParameter("check"));
-		int uno = Integer.parseInt(request.getParameter("uno"));
-		String nick = request.getParameter("nick");
+	
+		String actiont = request.getParameter("actiont");
 		check++;
 		boardDao.check(check, bno);
 		Boards board = boardDao.find(bno);
 		request.setAttribute("boardlist", board);
 		request.setAttribute("bno", bno);
-		
-		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&uno=" + uno + "&nick=" + nick);
+	
+		RequestDispatcher rd = request.getRequestDispatcher("viewboard.jsp" + "?acitont=" + actiont + "&bno=" + board.getBno());
 		rd.forward(request, response);
 		
 	}
@@ -233,11 +238,11 @@ public class Boardcontroller extends HttpServlet {
 	// 글 db에 등록하기
 	private void save(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		int uno = Integer.parseInt(request.getParameter("uno"));
+		HttpSession session = request.getSession();
+		int uno = Integer.valueOf((String) session.getAttribute("uno"));
 		String title = request.getParameter("title");
 		String content = request.getParameter("content");
 		String actiont = request.getParameter("actiont");
-		String nick = request.getParameter("nick");
 
 		
 		boolean issave = boardDao.save(uno, title, content, actiont);
@@ -248,21 +253,16 @@ public class Boardcontroller extends HttpServlet {
 		}
 	
 		response.setCharacterEncoding("UTF-8");
-		response.sendRedirect(request.getContextPath() + "/Boards?action=" + actiont + "&uno=" + uno + "&nick=" + nick);
+		response.sendRedirect(request.getContextPath() + "/Boards?action=" + actiont);
 	}
 	// 글쓰기 페이지 이동
 	private void write(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		int uno = Integer.parseInt(request.getParameter("uno"));
-		String nick = request.getParameter("nick");
-		RequestDispatcher rd = request.getRequestDispatcher("write.jsp" + "?uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("write.jsp");
 		rd.forward(request, response);
 	}
-	// index 페이지 이동
+	// main 페이지 이동
 	private void home(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int uno = Integer.parseInt(request.getParameter("uno"));
-		String nick = request.getParameter("nick");
-		RequestDispatcher rd = request.getRequestDispatcher("main.jsp" + "&uno=" + uno + "&nick=" + nick);
+		RequestDispatcher rd = request.getRequestDispatcher("main.jsp");
 		rd.forward(request, response);
 	}
 	// 게시판 출력

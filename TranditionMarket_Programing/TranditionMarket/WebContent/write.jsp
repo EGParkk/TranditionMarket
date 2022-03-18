@@ -31,16 +31,15 @@
 		
 		<div class="card">
 			<div class="card-body">
-				<form action="<%=request.getContextPath()%>/Boards"
-					method="post">
+				<form action="<%=request.getContextPath()%>/Boards" method="POST">
 					<% if (action.equals("edit")) { %>
 					<input type="hidden" name="action" value="cedit" />
 					<input type="hidden" name="bno" value="<%= request.getParameter("bno") %>"/>
 					<input type="hidden" name="check" value="<%= request.getParameter("check") %>" />
-					<input type="hidden" name="uno" value="<%= request.getParameter("uno") %>" />
+					<input type="hidden" name="uno" value="<%= (String) session.getAttribute("uno") %>" />
 					<% } else { %>
 					<input type="hidden" name="action" value="save" />
-					<input type="hidden" name="uno" value="<%= request.getParameter("uno") %>" />
+					<input type="hidden" name="uno" value="<%= (String) session.getAttribute("uno") %>" />
 					<% } %>
 					<input type="hidden" name="actiont" value="<%= actiont %>" />
 					<input type="text" class="form-control mb-3" name="title" value="<%= title %>"

@@ -53,6 +53,7 @@ public class MypageDAO {
 			
 			if(rs.next()) {
 				user = new User();
+				user.setUno(rs.getInt("uno"));
 				user.setUserId(rs.getString("id"));
 				user.setUserPassword(rs.getString("pw"));
 				user.setUserAddress(rs.getString("uadd"));
@@ -80,13 +81,9 @@ public class MypageDAO {
 			pstmt.setString(1, id);
 			
 			delete = pstmt.executeUpdate() != 0;
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			closeAll();
 		}
-		
 		
 		return delete;
 		
@@ -132,7 +129,7 @@ public class MypageDAO {
 				market.setMname(rs.getString("mname"));
 				market.setMtype(rs.getString("mtype"));
 				market.setMadd(rs.getString("madd"));
-				market.setPeriod(rs.getString("preiod"));
+				market.setPeriod(rs.getString("period"));
 				
 				bookmark.add(market);
 			}
@@ -171,7 +168,7 @@ public class MypageDAO {
 	
 	public boolean deletBookmark(String id, String mname) {
 		boolean delete = false;
-		String SQL = "DELETE FROM bookmark WHERE uno = (SELECT uno FROM USER WHERE id = ?) AND mno = (SELECT mno FROM market WHERE mname= ? )";
+		String SQL = "DELETE FROM bookmark WHERE uno in (SELECT uno FROM USER WHERE id = ?) AND mno in (SELECT mno FROM market WHERE mname= ? )";
 		
 		try {
 			pstmt = conn.prepareStatement(SQL);

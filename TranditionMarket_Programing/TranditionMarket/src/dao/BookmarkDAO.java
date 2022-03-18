@@ -16,7 +16,7 @@ public class BookmarkDAO {
 	private PreparedStatement pstmt;
 
 	public BookmarkDAO() {
-		String URL = "jdbc:mysql://localhost:3306/traditionMarket?useSSL=false";
+		String URL = "jdbc:mysql://localhost:3306/tranditionMarket?useSSL=false";
 		String id = "root";
 		String pw = "1234";
 		try {
@@ -30,13 +30,13 @@ public class BookmarkDAO {
 
 	}
 
-	public boolean deleteBookmark(String id, String mname) {
-		String SQL = "delete from bookmark where uno =(select uno from user where id = ? ) and mno = (select mno from market where mname = ?)";
+	public boolean deleteBookmark(String id, String mno) {
+		String SQL = "delete from bookmark where uno =(select uno from user where id = ? ) and mno = ?";
 		Boolean delete = false;
 		try {
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, id);
-			pstmt.setString(2, mname);
+			pstmt.setString(2, mno);
 
 			delete = pstmt.executeUpdate() != 0;
 
@@ -47,17 +47,18 @@ public class BookmarkDAO {
 	}
 
 	public List<MarketBean> showBookmark(String id) {
-		String SQL = "select * from market where mno = (select mno from bookmark where uno = (select uno from user where id = ?))";
+		String SQL = "select * from market where mno in (select mno from bookmark where uno = (select uno from user where id = ?))";
 		List<MarketBean> marketList = new ArrayList<>();
 		try {
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setString(1, "userId");
+			pstmt.setString(1, id);
 
 			rs = pstmt.executeQuery();
-			if (rs.next()) {
+			while (rs.next()) {
 				MarketBean market = new MarketBean();
 				market.setMname(rs.getString("mname"));
 				market.setMadd(rs.getString("madd"));
+				market.setMno(rs.getInt("mno"));
 //				market.setMarketImg("url");
 				marketList.add(market);
 			}
@@ -68,5 +69,21 @@ public class BookmarkDAO {
 		}
 
 		return marketList;
+	}
+	public String getMarketImg(int mno) {
+		String url = "null";
+		String SQL = "select url from mimg where mno = ?";
+		try {
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, mno);
+			
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				url = rs.getString("url");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return url;
 	}
 }

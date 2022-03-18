@@ -74,7 +74,7 @@ List<Boards> myPost = mdao.getMyPost(id);
 			if (user.getAdmin() == 0) { /* 일반회원 수정/탈퇴 버튼 */
 			%>
 			<!-- 회원정보 수정 모달창 팝업 -->
-			<button type="button" class="btn btn-primary" id="openEditModal">수정</button>
+			<button type="button" class="btn btn-primary" id="openEditModal" style="margin-right: 5px">수정</button>
 			<!-- 회원탈퇴 모달 팝업 -->
 			<button type="button" class="btn btn-warning" id="openExitModal">탈퇴</button>
 			<%
@@ -87,7 +87,8 @@ List<Boards> myPost = mdao.getMyPost(id);
 		</div>
 	</div>
 	<div style="display: flex-row; margin-top: 30px; margin-left: 30px">
-		<h2>즐겨찾기</h2>
+		<h2 style="display: inline">즐겨찾기</h2>
+		<button type="button" class="btn btn-sm btn-primary" onclick="location.href='<%=request.getContextPath()%>/Bookmark'">더보기</button>
 		<table class="table">
 			<thead>
 				<tr>
@@ -187,7 +188,7 @@ List<Boards> myPost = mdao.getMyPost(id);
 			</div>
 			<form id="exitForm" action="<%=request.getContextPath()%>/Mypage?cmd=delete" method="post">
 				<div class="modal-body">
-					<input type="hidden" name="cmd" value="delete"> <input id="exitId" name="userId" type="hidden" value="<%=session.getAttribute("userId")%>">
+					<input type="hidden" name="cmd" value="delete"> <input id="exitId" name="userId" type="hidden" value="<%=session.getAttribute("userID")%>">
 				</div>
 				<div class="alert alert-danger d-flex align-items-center" role="alert">
 					<use xlink:href="#exclamation-triangle-fill" />
@@ -211,12 +212,12 @@ List<Boards> myPost = mdao.getMyPost(id);
 			</div>
 			<form id="fm-delete-bm">
 				<div class="modal-body">
-					<input type="hidden" name="cmd" value="deleteBm"> <input name="userId" type="hidden" value="<%=session.getAttribute("userId")%>"> <input type="hidden" name="mname" value="">
+					<input type="hidden" name="cmd" value="deleteBm"> <input name="userId" type="hidden" value="<%=session.getAttribute("userID")%>"> <input type="hidden" name="mname" value="">
 				</div>
 				<div class="alert alert-danger d-flex align-items-center" role="alert">
 					<use xlink:href="#exclamation-triangle-fill" />
 					</svg>
-					<div>즐겨찾기를 삭제됩니다</div>
+					<div>즐겨찾기가 삭제됩니다</div>
 				</div>
 				<div class="modal-footer">
 					<button id="delete-bm-btn" type="submit" class="btn btn-primary">삭제</button>
@@ -226,6 +227,12 @@ List<Boards> myPost = mdao.getMyPost(id);
 		</div>
 	</div>
 </div>
+<script>
+	const profileImg = document.querySelector(".profileImg");
+	if(profileImg.src == 'http://localhost:8080/TranditionMarket/null'){
+		profileImg.src = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pjxzdmcgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjQgMjQ7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGcgaWQ9ImluZm8iLz48ZyBpZD0iaWNvbnMiPjxnIGlkPSJ1c2VyIj48ZWxsaXBzZSBjeD0iMTIiIGN5PSI4IiByeD0iNSIgcnk9IjYiLz48cGF0aCBkPSJNMjEuOCwxOS4xYy0wLjktMS44LTIuNi0zLjMtNC44LTQuMmMtMC42LTAuMi0xLjMtMC4yLTEuOCwwLjFjLTEsMC42LTIsMC45LTMuMiwwLjlzLTIuMi0wLjMtMy4yLTAuOSAgICBDOC4zLDE0LjgsNy42LDE0LjcsNywxNWMtMi4yLDAuOS0zLjksMi40LTQuOCw0LjJDMS41LDIwLjUsMi42LDIyLDQuMSwyMmgxNS44QzIxLjQsMjIsMjIuNSwyMC41LDIxLjgsMTkuMXoiLz48L2c+PC9nPjwvc3ZnPg==";
+	}
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script type="text/javascript" src="js/mypage.js"></script>
 <jsp:include page="footer.jsp" />

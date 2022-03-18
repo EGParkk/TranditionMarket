@@ -10,35 +10,15 @@
 	href="https://cdn.datatables.net/v/dt/jqc-1.12.4/dt-1.11.4/b-2.2.2/sl-1.3.4/datatables.min.css" />
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/css/market.css" />
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/css/bootstrap.min.css" />
-<link rel="canonical"
-   href="https://getbootstrap.com/docs/5.1/examples/headers/" />
- <link rel="canonical"
-      href="https://getbootstrap.com/docs/5.1/examples/carousel/" />
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/css/mypage.css" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/css/bootstrap.min.css" />
 <title>Insert title here</title>
 </head>
 <body>
 	<%
-		String mainId="";
-		String login = "로그인";
-		String hideJoin = "";
-		String hideMypage = "d-none";		
-		
-		boolean now = false;	// 테스트용 boolean값 true로 바꾸면 로그인 된 상태로 볼수있음
-		if(session.getAttribute("userID")!=null){ // session.getAttribute("userId")!=null 로 로그인 상태 체크
-			mainId = session.getAttribute("userID")+"님 환영합니다.";
-			login = "로그아웃";
-			hideJoin ="d-none";
-			hideMypage = "";
-		}
-		String uno = "1";
-		String nick = "관리자";
+		String mainId = session.getAttribute("userID")+"님 환영합니다.";
 	%>
 	<header class="p-3 bg-dark text-white">
 		<div class="container">
@@ -49,10 +29,21 @@
 					<li><a href="<%=request.getContextPath()%>/Boards?action=board&" class="nav-link px-2 mt-3 text-white">게시판</a></li>
 				</ul>
 				<div class="text-end flex-row-reverse mt-2">
+				
+			<%
+				if(session.getAttribute("userID") == null) {
+			%>
+					<button type="button" class="btn btn-outline-light me-2"><a href="login.jsp">로그인</a></button>
+					<button type="button" class="btn btn-warning"><a href="join.jsp">회원가입</a></button>
+			<%
+				} else {
+			%>
 					<span class="mr-2"><%=mainId%></span>
-					<button type="button" class="btn btn-warning <%=hideMypage%>"><a href="<%=request.getContextPath()%>/Mypage">마이페이지</a></button>
-					<button type="button" class="btn btn-outline-light me-2"><a href="login.jsp"><%=login%></a></button>
-					<button type="button" class="btn btn-warning <%=hideJoin%>"><a href="join.jsp">회원가입</a></button>
+					<button type="button" class="btn btn-warning"><a href="<%=request.getContextPath()%>/Mypage">마이페이지</a></button>
+					<button type="button" class="btn btn-outline-light me-2"><a href="logout.jsp">로그아웃</a></button>
+			<%
+				}
+			%>
 				</div>
 			</div>
 		</div>
