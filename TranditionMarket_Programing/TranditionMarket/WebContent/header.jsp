@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> 
+<%@ page import="model.User"%>
+<%@ page import="dao.MypageDAO"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,11 +16,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/css/bootstrap.min.css" />
-<title>Insert title here</title>
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/css/mypage.css" />
+<title>전알사</title>
 </head>
 <body>
 	<%
-		String mainId = session.getAttribute("userID")+"님 환영합니다.";
+		String id = (String) session.getAttribute("userID");
+		String mainId = id+"님 환영합니다.";
+		MypageDAO mdao = new MypageDAO();
+		User user = mdao.showData(id);
+		
 	%>
 	<header class="p-3 bg-dark text-white">
 		<div class="container">
@@ -38,6 +46,10 @@
 			<%
 				} else {
 			%>
+					
+					<img src="<%=request.getContextPath()%><%=user.getUserImg() %>" alt="image" width="32" height="32" class="rounded-circle">
+					<% System.out.println(request.getContextPath()); %>
+					<% System.out.println(user.getUserImg());%>
 					<span class="mr-2"><%=mainId%></span>
 					<button type="button" class="btn btn-warning"><a href="<%=request.getContextPath()%>/Mypage">마이페이지</a></button>
 					<button type="button" class="btn btn-outline-light me-2"><a href="logout.jsp">로그아웃</a></button>

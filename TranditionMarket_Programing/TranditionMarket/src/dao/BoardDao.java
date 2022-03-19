@@ -14,14 +14,17 @@ import model.Boards;
 
 public class BoardDao {
 
-	private DataSource dataSource;
+//	private DataSource dataSource;
 	private Connection conn;
 	private PreparedStatement pstmt;
 	private ResultSet rs;
+	String dbURL = "jdbc:mysql://localhost:3306/tranditionmarket?useSSL=false";
+	String dbID = "root";
+	String dbPassword = "1234";
 
-	public BoardDao(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+//	public BoardDao(DataSource dataSource) {
+//		this.dataSource = dataSource;
+//	}
 
 	public BoardDao() {
 		try {
@@ -37,6 +40,8 @@ public class BoardDao {
 			closeAll();
 		}
 	}
+	
+	
 
 	public List<Boards> findAll(String action) {
 		List<Boards> list = new ArrayList<>();
@@ -49,7 +54,8 @@ public class BoardDao {
 			type = "where btype = '후기'";
 		}
 		try {
-			conn = dataSource.getConnection();
+			
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement("select * from board b join user u on b.uno = u.uno " + type);
 			rs = pstmt.executeQuery();
 
@@ -80,7 +86,8 @@ public class BoardDao {
 	public String getDate() {
 		String SQL = "select now()";
 		try {
-			Connection conn = dataSource.getConnection();
+			
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
 
@@ -106,7 +113,7 @@ public class BoardDao {
 			type = "후기";
 		}
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement(
 					"insert into board (`title`, `reco`, `check`, `content`, `bdate`, `btype`, `uno`) VALUES(?,?,?,?,?,?,?)");
 			pstmt.setString(1, title);
@@ -128,9 +135,9 @@ public class BoardDao {
 		return rowAffected;
 	}
 
-	public Boards find(int bno) {
+	public Boards find(int bno) { // 글 번호(bno)를 지정해서 해당 글에 대한 모든 정보를 board에 저장함
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement("select * from board b join user u on b.uno = u.uno where b.bno = ?");
 			pstmt.setInt(1, bno);
 			rs = pstmt.executeQuery();
@@ -158,6 +165,31 @@ public class BoardDao {
 
 		return null;
 	}
+	
+	public List<Boards> findRecentBoard() {
+		List<Boards> list = new ArrayList<>();
+		
+		
+		try {
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
+			pstmt = conn.prepareStatement("select * from board where btype = '공지' order by bno desc limit 3");
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				
+				Boards board = new Boards();
+				board.setBno(rs.getInt("bno"));
+				
+				list.add(board);
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
 
 	private void closeAll() {
 
@@ -177,7 +209,7 @@ public class BoardDao {
 
 	public void reco(int reco, int bno) {
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement(" UPDATE board SET reco = ? WHERE bno = ? ");
 			pstmt.setInt(1, reco);
 			pstmt.setInt(2, bno);
@@ -196,7 +228,7 @@ public class BoardDao {
 
 	public void check(int check, int bno) {
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement("UPDATE board SET `check` = ? WHERE bno = ?;");
 			pstmt.setInt(1, check);
 			pstmt.setInt(2, bno);
@@ -218,7 +250,7 @@ public class BoardDao {
 		boolean rowAffected = false;
 
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement("UPDATE comment SET ccontent = ? WHERE cno = ?;");
 			pstmt.setString(1, board.getCcontent());
 			pstmt.setInt(2, board.getCno());
@@ -238,7 +270,7 @@ public class BoardDao {
 
 	public Boards findcomment(int cno) {
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement("SELECT * from comment join user on comment.uno = user.uno join board on board.bno = comment.bno where comment.cno = ?");
 			pstmt.setInt(1, cno);
 			rs = pstmt.executeQuery();
@@ -265,7 +297,7 @@ public class BoardDao {
 
 	public void cdelete(int bno) {
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement(" DELETE FROM board WHERE bno = ? ");
 			pstmt.setInt(1, bno);
 			
@@ -281,7 +313,7 @@ public class BoardDao {
 
 	public void cupdate(int bno, String title, String content) {
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement(" UPDATE board SET `title` = ?, `content` = ? WHERE (`bno` = ?);");
 			pstmt.setString(1, title);
 			pstmt.setString(2, content);
@@ -301,7 +333,7 @@ public class BoardDao {
 
 	public void delete(int cno) {
 		try {
-			conn = dataSource.getConnection();
+			conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 			pstmt = conn.prepareStatement(" DELETE FROM comment WHERE cno = ? ");
 			pstmt.setInt(1, cno);
 			
@@ -320,7 +352,7 @@ public class BoardDao {
 		String Date = new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
 
 			try{
-				conn = dataSource.getConnection();	
+				conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
 				
 				pstmt = conn.prepareStatement("INSERT INTO comment (`ccontent`, `uno`, `bno`, `cdate`) VALUES (?,?,?,?) ");
 				pstmt.setString(1, comment);

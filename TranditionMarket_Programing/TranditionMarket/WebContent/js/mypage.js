@@ -33,7 +33,7 @@ $('#fm-kick').submit(function(e) {
 	$('.btn-action').prop('disabled', true);
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:8080/TranditionMarket/admin",
+		url: "http://localhost:8090/TranditionMarket/admin",
 		data: $('#fm-kick').serialize(),
 		dataType: 'text'
 	})
@@ -83,7 +83,7 @@ $('#fm-control').submit(function(e) {
 	$('.btn-action').prop('disabled', true);
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:8080/TranditionMarket/admin",
+		url: "http://localhost:8090/TranditionMarket/admin",
 		data: $('#fm-control').serialize(),
 		dataType: 'text'
 	})
@@ -109,7 +109,7 @@ $('#delete-bm-btn').on('click', function(e){
 	$('.btn-action').prop('disabled', true);
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:8080/TranditionMarket/Mypage",
+		url: "http://localhost:8090/TranditionMarket/Mypage",
 		data: $('#fm-delete-bm').serialize(),
 		dataType: 'text'
 	})
@@ -124,6 +124,3 @@ $('#delete-bm-btn').on('click', function(e){
 		console.log(textStatus)
 	})
 })
-
-
-

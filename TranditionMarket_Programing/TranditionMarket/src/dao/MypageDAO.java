@@ -53,7 +53,6 @@ public class MypageDAO {
 			
 			if(rs.next()) {
 				user = new User();
-				user.setUno(rs.getInt("uno"));
 				user.setUserId(rs.getString("id"));
 				user.setUserPassword(rs.getString("pw"));
 				user.setUserAddress(rs.getString("uadd"));
@@ -64,6 +63,7 @@ public class MypageDAO {
 				user.setUserName(rs.getString("uname"));
 				user.setAdmin(rs.getByte("admin"));
 				user.setWarning(rs.getInt("warning"));
+				user.setUno(rs.getInt("uno"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -143,7 +143,7 @@ public class MypageDAO {
 	// 내가 작성한 글 목록을 가져오는 메소드 (Board는 임시로 설정한 model)
 	public List<Boards> getMyPost(String id){
 		List<Boards> myPost = new ArrayList<>();
-		String SQL = "SELECT * FROM board WHERE uno = (SELECT uno FROM USER WHERE id = ?) order by bdate desc limit 1, 5";
+		String SQL = "SELECT * FROM board WHERE uno = (SELECT uno FROM USER WHERE id = ?) order by bdate desc limit 0, 5";
 		
 		try {
 			pstmt = conn.prepareStatement(SQL);
@@ -152,10 +152,11 @@ public class MypageDAO {
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				Boards board = new Boards();
+				String bdate = rs.getString("bdate");
 				board.setTitle(rs.getString("title"));
 				board.setReco(rs.getInt("reco"));
 				board.setCheck(rs.getInt("check"));
-				board.setDate(rs.getString("bdate"));
+				board.setDate(bdate.substring(0, bdate.length()-2));
 				myPost.add(board);
 			}
 		} catch (SQLException e) {

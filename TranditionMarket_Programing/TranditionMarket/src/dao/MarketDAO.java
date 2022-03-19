@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,5 +167,26 @@ public class MarketDAO {
 		}
 		
 		return searchedMKIMG;
+	}
+	
+	public MarketImgBean getImg(int mno) {
+		MarketImgBean viewImg = new MarketImgBean();
+		
+		String SQL = "select url from mimg where mno = ?";
+		
+		try {
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, mno);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				viewImg.setUrl(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return viewImg;
 	}
 }

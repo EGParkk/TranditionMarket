@@ -34,11 +34,11 @@ List<Boards> myPost = mdao.getMyPost(id);
 		<table style="width: 100%;">
 			<tr>
 				<td>
-					<img class="profileImg" src="<%=user.getUserImg()%>" width="50px" height="50px">
+					<img class="profileImg" src="<%=user.getUserImg()%>" width="60px" height="60px">
 				</td>
 				<td>
 					아이디 :
-					<%=user.getUserId() %>
+					<%=user.getUserId()%>
 				</td>
 			</tr>
 			<tr>
@@ -161,11 +161,13 @@ List<Boards> myPost = mdao.getMyPost(id);
 			<div class="modal-header">
 				<h5 class="modal-title" id="exampleModalLabel">회원 정보 수정</h5>
 			</div>
-			<form action="<%=request.getContextPath()%>/Mypage?cmd=edit" method="post" autocomplete="off">
+			<form id="form" name="form" action="<%=request.getContextPath()%>/Mypage?cmd=edit" method="post" autocomplete="off">
 				<div class="modal-body">
-					<label for="userId">아이디</label> <input type="text" id="userId" readonly class="form-control" name="userId" value="<%=user.getUserId()%>"> <label for="userPw">비밀번호</label> <input type="password" id="userPw" class="form-control" name="userPw" value="<%=user.getUserPassword()%>"> <label for="userName">이름</label> <input type="text" id="userName" class="form-control" name="userName" value="<%=user.getUserName()%>"> <label for="userId">닉네임</label> <input type="text" id="userNick" class="form-control" name="userNick" value="<%=user.getUserNick()%>"> <label for="userId">이메일</label> <input type="text" id="userEmail" class="form-control" name="userEmail" value="<%=user.getUserEmail()%>"> <label for="userImg">프로필사진</label> <input type="text" id="userImg" class="form-control" name="userImg" value="<%=user.getUserImg()%>"> <label for="userId">주소</label> <input type="text" id="userAddress" class="form-control" name="userAddress"
+					<label for="userId">아이디</label> <input type="text" id="userId" readonly class="form-control" name="userId" value="<%=user.getUserId()%>"> <label for="userPw">비밀번호</label> <input type="password" id="userPw" class="form-control" name="userPw" value="<%=user.getUserPassword()%>"> <label for="userName">이름</label> <input type="text" id="userName" class="form-control" name="userName" value="<%=user.getUserName()%>"> <label for="userId">닉네임</label> <input type="text" id="userNick" class="form-control" name="userNick" value="<%=user.getUserNick()%>"> <label for="userId">이메일</label> <input type="text" id="userEmail" class="form-control" name="userEmail" value="<%=user.getUserEmail()%>"> <label for="userImg">프로필사진</label>					<img class="profileImg" src="<%=user.getUserImg()%>" width="60px" height="60px">
+					 <input type="text" id="userImg" class="form-control" name="userImg" value="<%=user.getUserImg()%>"> <label for="userId">주소</label> <input type="text" id="userAddress" class="form-control" name="userAddress"
 						value="<%=user.getUserAddress()%>"
-					>
+					> <input class="btn btn-sm btn-primary" type="button" value="주소검색" onclick="roadPopup();">
+
 					<div class="mb-3">
 						<label for="exampleFormControlTextarea1" class="form-label">자기소개</label>
 						<textarea class="form-control" id="exampleFormControlTextarea1" name="userIntro" rows="3"><%=user.getUserIntro()%></textarea>
@@ -229,8 +231,21 @@ List<Boards> myPost = mdao.getMyPost(id);
 </div>
 <script>
 	const profileImg = document.querySelector(".profileImg");
-	if(profileImg.src == 'http://localhost:8080/TranditionMarket/null'){
+	if (profileImg.src == 'http://localhost:8090/TranditionMarket/null') {
 		profileImg.src = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pjxzdmcgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjQgMjQ7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGcgaWQ9ImluZm8iLz48ZyBpZD0iaWNvbnMiPjxnIGlkPSJ1c2VyIj48ZWxsaXBzZSBjeD0iMTIiIGN5PSI4IiByeD0iNSIgcnk9IjYiLz48cGF0aCBkPSJNMjEuOCwxOS4xYy0wLjktMS44LTIuNi0zLjMtNC44LTQuMmMtMC42LTAuMi0xLjMtMC4yLTEuOCwwLjFjLTEsMC42LTIsMC45LTMuMiwwLjlzLTIuMi0wLjMtMy4yLTAuOSAgICBDOC4zLDE0LjgsNy42LDE0LjcsNywxNWMtMi4yLDAuOS0zLjksMi40LTQuOCw0LjJDMS41LDIwLjUsMi42LDIyLDQuMSwyMmgxNS44QzIxLjQsMjIsMjIuNSwyMC41LDIxLjgsMTkuMXoiLz48L2c+PC9nPjwvc3ZnPg==";
+	}
+
+	function roadPopup() {
+		const pop = window.open("/TranditionMarket/popup.jsp", "pop",
+				"width=570, height=420, scrollbars=yes, resizable=yes");
+
+	}
+	function jusoCallBack(roadFullAddr, roadAddrPart1, addrDetail,
+			roadAddrPart2, engAddr, jibunAddr, zipNo, admCd, rnMgtSn, bdMgtSn,
+			detBdNmList, bdNm, bdKdcd, siNm, sggNm, emdNm, liNm, rn, udrtYn,
+			buldMnnm, buldSlno, mtYn, lnbrMnnm, lnbrSlno, emdNo) {
+		// 팝업페이지에서 주소입력한 정보를 받아서, 현 페이지에 정보를 등록합니다.
+		document.form.userAddress.value = roadAddrPart1 + roadAddrPart2 + addrDetail;
 	}
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>

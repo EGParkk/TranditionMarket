@@ -24,7 +24,7 @@
 		<div class="row featurette">
 			<div class="col-md-7 order-md-2">
 				<h2 class="featurette-heading">
-					<div class="px-2"><%=viewMK.getMname()%></div>
+					<div class="px-2"><%=viewMK.getMname()%>&nbsp&nbsp<i class="bi bi-star"></i></div>
 				</h2>
 				<br>
 				<p class="lead">

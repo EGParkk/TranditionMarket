@@ -8,17 +8,17 @@
 <div>
 	<div class="position-relative col-8 mx-auto mt-4">
 		<%
+			if ((String) session.getAttribute("uno") == null) {
+				session.setAttribute("uno","");
+				session.setAttribute("nick","");
+				session.setAttribute("admin","0");
+			}
 			String action = request.getParameter("action");
 			String uno = (String) session.getAttribute("uno");
 			String nick = (String) session.getAttribute("nick");
 			String admin = (String) session.getAttribute("admin");
 			String id = (String) session.getAttribute("userID");
 			
-			if (uno == null) {
-				session.setAttribute("uno","");
-				session.setAttribute("nick","");
-				session.setAttribute("admin","0");
-			}
 			if (id != null) {
 				MypageDAO mdao = new MypageDAO();
 				User user = mdao.showData(id);

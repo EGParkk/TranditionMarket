@@ -30,7 +30,7 @@ public class Boardcontroller extends HttpServlet {
 	
 	@Override
 	public void init() throws ServletException {
-		boardDao = new BoardDao(ds);
+		boardDao = new BoardDao();
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

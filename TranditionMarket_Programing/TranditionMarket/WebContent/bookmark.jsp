@@ -60,7 +60,7 @@ List<MarketBean> bookmark = bdao.showBookmark(id);
 <script>
 	let imgSrc = document.querySelectorAll(".imgBox")
 	for (let i = 0; i < imgSrc.length; i++) {
-		if (imgSrc[i].src == 'http://localhost:8080/TranditionMarket/null') {
+		if (imgSrc[i].src == 'http://localhost:8090/TranditionMarket/null') {
 			imgSrc[i].src = "https://pds.joongang.co.kr//news/component/htmlphoto_mmdata/201807/10/ba4fa995-5ce9-4e2f-a238-13c8bdd22d21.jpg";
 		}
 	};
@@ -73,7 +73,7 @@ List<MarketBean> bookmark = bdao.showBookmark(id);
 		$('.btn-action').prop('disabled', true);
 		$.ajax({
 			type: "POST",
-			url: "http://localhost:8080/TranditionMarket/Bookmark",
+			url: "http://localhost:8090/TranditionMarket/Bookmark",
 			data: $('#bmDeleteForm').serialize(),
 			dataType: 'text'
 		})
